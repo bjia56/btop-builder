@@ -1,0 +1,43 @@
+name: Build btop
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+
+env:
+  BTOP_RELEASE: v1.3.2
+
+jobs:
+  build_macos:
+    runs-on: macos-12
+    steps:
+      - name: Install dependencies
+        run: |
+          brew install cmake git llvm ninja lowdown
+
+      - name: Build
+        run: |
+          git clone https://github.com/aristocratos/btop.git
+          cd btop
+          git checkout ${{ env.BTOP_RELEASE }}
+
+          export LLVM_PREFIX="$(brew --prefix llvm)"
+          export CXX="$LLVM_PREFIX/bin/clang++"
+          export CPPFLAGS="-I$LLVM_PREFIX/include"
+          export LDFLAGS="-L$LLVM_PREFIX/lib -L$LLVM_PREFIX/lib/c++ -Wl,-rpath,$LLVM_PREFIX/lib/c++ -fuse-ld=$LLVM_PREFIX/bin/ld64.lld"
+          cmake -B build -G Ninja -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/btop-install
+
+          cmake --build build --parallel
+          cmake --install build
+
+          cd ${{ github.workspace }}
+
+          tar -czf ${{ github.workspace }}/btop.tar.gz btop-install
+          zip ${{ github.workspace }}.zip $(tar tf ${{ github.workspace }}/btop.tar.gz)
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: btop
+          path: ./btop.zip
