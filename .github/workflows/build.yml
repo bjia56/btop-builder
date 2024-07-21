@@ -39,7 +39,7 @@ jobs:
           cd ${{ github.workspace }}
 
           tar -czf ${{ github.workspace }}/btop.tar.gz btop-install
-          zip ${{ github.workspace }}.zip $(tar tf ${{ github.workspace }}/btop.tar.gz)
+          zip ${{ github.workspace }}/btop.zip $(tar tf ${{ github.workspace }}/btop.tar.gz)
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
