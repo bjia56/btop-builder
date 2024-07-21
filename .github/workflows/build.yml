@@ -2,6 +2,16 @@ name: Build btop
 
 on:
   workflow_dispatch:
+    inputs:
+      btop-version:
+        required: false
+        type: string
+      release-version:
+        required: false
+        type: string
+      description:
+        required: false
+        type: string
   push:
     branches: ["main"]
 
@@ -21,7 +31,7 @@ jobs:
         run: |
           git clone https://github.com/aristocratos/btop.git
           cd btop
-          git checkout ${{ env.BTOP_RELEASE }}
+          git checkout ${{ inputs.btop-version || env.BTOP_RELEASE }}
 
           export LLVM_PREFIX="$(brew --prefix llvm)"
           export CXX="$LLVM_PREFIX/bin/clang++"
@@ -47,3 +57,24 @@ jobs:
         with:
           name: btop-darwin-universal-zip
           path: ./btop-darwin-universal.zip
+
+  release:
+    if: ${{ inputs.release-version }}
+    needs: build_macos
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          pattern: btop-*
+          path: /tmp/btop/
+          merge-multiple: true
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: /tmp/btop/*.zip
+          tag_name: ${{ inputs.release-version }}
+          body: ${{ inputs.description }}
