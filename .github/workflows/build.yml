@@ -48,8 +48,10 @@ jobs:
           cmake --install build
 
           cd ${{ github.workspace }}
+          rm -rf btop
+          mv btop-install btop
 
-          tar -czf ${{ github.workspace }}/btop.tar.gz btop-install/*
+          tar -czf ${{ github.workspace }}/btop.tar.gz btop
           zip ${{ github.workspace }}/btop-darwin-universal.zip $(tar tf ${{ github.workspace }}/btop.tar.gz)
 
       - name: Upload artifacts
