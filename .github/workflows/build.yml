@@ -84,7 +84,8 @@ jobs:
           export CC="zig cc -target ${{ matrix.arch }}-linux-gnu.2.17"
           cmake \
             -B build \
-            -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/btop-install
+            -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/btop-install \
+            -DCMAKE_SYSTEM_PROCESSOR=${{ matrix.arch }}
 
           cmake --build build --parallel
           cmake --install build
