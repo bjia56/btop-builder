@@ -16,7 +16,7 @@ on:
     branches: ["main"]
 
 env:
-  BTOP_RELEASE: v1.3.2
+  BTOP_RELEASE: main #v1.3.2
 
 jobs:
   build_macos:
@@ -29,7 +29,7 @@ jobs:
 
       - name: Build
         run: |
-          git clone https://github.com/aristocratos/btop.git
+          git clone https://github.com/bjia56/btop.git
           cd btop
           git checkout ${{ inputs.btop-version || env.BTOP_RELEASE }}
 
@@ -76,7 +76,7 @@ jobs:
 
       - name: Build
         run: |
-          git clone https://github.com/aristocratos/btop.git
+          git clone https://github.com/bjia56/btop.git
           cd btop
           git checkout ${{ inputs.btop-version || env.BTOP_RELEASE }}
 
