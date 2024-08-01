@@ -105,7 +105,7 @@ jobs:
 
   release:
     if: ${{ inputs.release-version }}
-    needs: [build_macos, build-linux]
+    needs: [build_macos, build_linux]
     runs-on: ubuntu-latest
     permissions:
       contents: write
